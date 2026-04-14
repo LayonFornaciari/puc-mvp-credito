@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsão de Risco de Crédito</title>
+    <!-- Importando o Bootstrap para deixar o visual profissional automaticamente -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 50px; }
+        .btn-primary { background-color: #0d6efd; border: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h3 class="text-center mb-4">🏦 Análise de Risco de Crédito</h3>
+                <p class="text-muted text-center">Preencha os dados abaixo para simular a aprovação.</p>
+
+                <form id="formCredito">
+                    <!-- Idade -->
+                    <div class="mb-3">
+                        <label for="age" class="form-label">Idade do Solicitante</label>
+                        <input type="number" class="form-control" id="age" min="18" max="99" required placeholder="Ex: 35">
+                    </div>
+
+                    <!-- Valor -->
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Valor Solicitado (DM)</label>
+                        <input type="number" class="form-control" id="amount" min="1" required placeholder="Ex: 5000">
+                    </div>
+
+                    <!-- Duração -->
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">Duração do Empréstimo (meses)</label>
+                        <input type="number" class="form-control" id="duration" min="1" required placeholder="Ex: 24">
+                    </div>
+
+                    <!-- Conta Corrente -->
+                    <div class="mb-3">
+                        <label for="checking_balance" class="form-label">Saldo na Conta Corrente</label>
+                        <select class="form-select" id="checking_balance" required>
+                            <option value="< 0 DM">Negativado (< 0 DM)</option>
+                            <option value="1 - 200 DM">Baixo (1 - 200 DM)</option>
+                            <option value="> 200 DM">Alto (> 200 DM)</option>
+                            <option value="unknown" selected>Desconhecido / Sem Conta</option>
+                        </select>
+                    </div>
+
+                    <!-- Propósito -->
+                    <div class="mb-4">
+                        <label for="purpose" class="form-label">Propósito do Empréstimo</label>
+                        <select class="form-select" id="purpose" required>
+                            <option value="car">Comprar um Carro</option>
+                            <option value="furniture/equipment">Móveis / Equipamentos</option>
+                            <option value="radio/tv" selected>Rádio / TV</option>
+                            <option value="education">Educação</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg" id="btnSubmit">Analisar Risco</button>
+                    </div>
+                </form>
+
+                <!-- Div para mostrar o resultado da API -->
+                <div id="resultadoBox" class="mt-4 alert d-none text-center" role="alert">
+                    <h4 id="resultadoTexto" class="mb-0"></h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Captura o evento de envio do formulário
+    document.getElementById('formCredito').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Evita que a página recarregue
+
+        // Botão em estado de carregamento
+        const btn = document.getElementById('btnSubmit');
+        btn.innerHTML = 'Analisando...';
+        btn.disabled = true;
+
+        // Esconde a caixa de resultado anterior
+        const resultadoBox = document.getElementById('resultadoBox');
+        resultadoBox.classList.add('d-none');
+        resultadoBox.classList.remove('alert-success', 'alert-danger');
+
+        // Captura os dados digitados
+        const dadosCliente = {
+            age: parseInt(document.getElementById('age').value),
+            amount: parseFloat(document.getElementById('amount').value),
+            duration: parseInt(document.getElementById('duration').value),
+            checking_balance: document.getElementById('checking_balance').value,
+            purpose: document.getElementById('purpose').value
+        };
+
+        try {
+            // Faz a requisição POST para a nossa API no Python
+            const resposta = await fetch('http://127.0.0.1:8000/prever', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosCliente)
+            });
+
+            if (!resposta.ok) throw new Error("Erro na comunicação com a API");
+
+            const resultado = await resposta.json();
+
+            // Exibe o resultado na tela
+            document.getElementById('resultadoTexto').innerText = resultado.mensagem;
+            resultadoBox.classList.remove('d-none');
+
+            if (resultado.codigo_risco === 0) {
+                resultadoBox.classList.add('alert-success'); // Verde para Aprovado
+            } else {
+                resultadoBox.classList.add('alert-danger'); // Vermelho para Reprovado
+            }
+
+        } catch (erro) {
+            alert("Erro ao conectar com a API. Verifique se o servidor FastAPI está rodando!");
+            console.error(erro);
+        } finally {
+            // Restaura o botão
+            btn.innerHTML = 'Analisar Risco';
+            btn.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>

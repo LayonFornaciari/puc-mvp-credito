@@ -91,3 +91,11 @@ def prever_risco(cliente: Cliente):
 @app.get("/")
 def root():
     return {"status": "API de Risco de Crédito Operacional. Use o endpoint POST /prever"}
+
+# ==============================================================================
+# BLOCO PARA RODAR A API DIRETO PELO PYCHARM (SEM PRECISAR DO TERMINAL)
+# ==============================================================================
+if __name__ == "__main__":
+    import uvicorn
+    print("Iniciando a API de Risco de Crédito...")
+    uvicorn.run(app, host="127.0.0.1", port=8000)
