@@ -16,54 +16,93 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="card p-4">
                 <h3 class="text-center mb-4">🏦 Análise de Risco de Crédito</h3>
                 <p class="text-muted text-center">Preencha os dados abaixo para simular a aprovação.</p>
 
                 <form id="formCredito">
-                    <!-- Idade -->
-                    <div class="mb-3">
-                        <label for="age" class="form-label">Idade do Solicitante</label>
-                        <input type="number" class="form-control" id="age" min="18" max="99" required placeholder="Ex: 35">
+                    <div class="row">
+                        <!-- Idade -->
+                        <div class="col-md-4 mb-3">
+                            <label for="age" class="form-label">Idade</label>
+                            <input type="number" class="form-control" id="age" min="18" max="99" required placeholder="Ex: 35">
+                        </div>
+
+                        <!-- Valor -->
+                        <div class="col-md-4 mb-3">
+                            <label for="amount" class="form-label">Valor (DM)</label>
+                            <input type="number" class="form-control" id="amount" min="1" required placeholder="Ex: 5000">
+                        </div>
+
+                        <!-- Duração -->
+                        <div class="col-md-4 mb-3">
+                            <label for="duration" class="form-label">Duração (meses)</label>
+                            <input type="number" class="form-control" id="duration" min="1" required placeholder="Ex: 24">
+                        </div>
                     </div>
 
-                    <!-- Valor -->
-                    <div class="mb-3">
-                        <label for="amount" class="form-label">Valor Solicitado (DM)</label>
-                        <input type="number" class="form-control" id="amount" min="1" required placeholder="Ex: 5000">
+                    <div class="row">
+                        <!-- Conta Corrente -->
+                        <div class="col-md-6 mb-3">
+                            <label for="checking_balance" class="form-label">Saldo na Conta Corrente</label>
+                            <select class="form-select" id="checking_balance" required>
+                                <option value="< 0 DM">Negativado (< 0 DM)</option>
+                                <option value="1 - 200 DM">Baixo (1 - 200 DM)</option>
+                                <option value="> 200 DM">Alto (> 200 DM)</option>
+                                <option value="unknown" selected>Desconhecido / Sem Conta</option>
+                            </select>
+                        </div>
+
+                        <!-- Histórico de Crédito -->
+                        <div class="col-md-6 mb-3">
+                            <label for="credit_history" class="form-label">Histórico de Crédito</label>
+                            <select class="form-select" id="credit_history" required>
+                                <option value="critical">Crítico / Inadimplências Anteriores</option>
+                                <option value="delayed">Já teve atrasos</option>
+                                <option value="repaid" selected>Empréstimos todos pagos</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <!-- Duração -->
-                    <div class="mb-3">
-                        <label for="duration" class="form-label">Duração do Empréstimo (meses)</label>
-                        <input type="number" class="form-control" id="duration" min="1" required placeholder="Ex: 24">
+                    <div class="row">
+                        <!-- Tempo de Emprego -->
+                        <div class="col-md-6 mb-3">
+                            <label for="employment_length" class="form-label">Tempo de Emprego Atual</label>
+                            <select class="form-select" id="employment_length" required>
+                                <option value="unemployed">Desempregado</option>
+                                <option value="< 1 yr">Menos de 1 ano</option>
+                                <option value="1 - 4 yrs" selected>1 a 4 anos</option>
+                                <option value="> 7 yrs">Mais de 7 anos</option>
+                            </select>
+                        </div>
+
+                        <!-- Moradia -->
+                        <div class="col-md-6 mb-3">
+                            <label for="housing" class="form-label">Situação de Moradia</label>
+                            <select class="form-select" id="housing" required>
+                                <option value="rent">Aluguel</option>
+                                <option value="own" selected>Casa Própria</option>
+                                <option value="for free">Mora de Favor</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <!-- Conta Corrente -->
-                    <div class="mb-3">
-                        <label for="checking_balance" class="form-label">Saldo na Conta Corrente</label>
-                        <select class="form-select" id="checking_balance" required>
-                            <option value="< 0 DM">Negativado (< 0 DM)</option>
-                            <option value="1 - 200 DM">Baixo (1 - 200 DM)</option>
-                            <option value="> 200 DM">Alto (> 200 DM)</option>
-                            <option value="unknown" selected>Desconhecido / Sem Conta</option>
-                        </select>
-                    </div>
-
-                    <!-- Propósito -->
+                    <!-- Propósito (Corrigido para bater com o CSV) -->
                     <div class="mb-4">
                         <label for="purpose" class="form-label">Propósito do Empréstimo</label>
                         <select class="form-select" id="purpose" required>
-                            <option value="car">Comprar um Carro</option>
+                            <option value="car (new)">Comprar um Carro (Novo)</option>
+                            <option value="car (used)">Comprar um Carro (Usado)</option>
                             <option value="furniture/equipment">Móveis / Equipamentos</option>
                             <option value="radio/tv" selected>Rádio / TV</option>
                             <option value="education">Educação</option>
                         </select>
                     </div>
 
-                    <div class="d-grid">
+                    <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary btn-lg" id="btnSubmit">Analisar Risco</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="btnForcarRisco">🐛 Debug: Preencher Perfil Real de Alto Risco</button>
                     </div>
                 </form>
 
@@ -78,31 +117,33 @@
 </div>
 
 <script>
-    // Captura o evento de envio do formulário
     document.getElementById('formCredito').addEventListener('submit', async function(event) {
-        event.preventDefault(); // Evita que a página recarregue
+        event.preventDefault();
 
-        // Botão em estado de carregamento
         const btn = document.getElementById('btnSubmit');
         btn.innerHTML = 'Analisando...';
         btn.disabled = true;
 
-        // Esconde a caixa de resultado anterior
         const resultadoBox = document.getElementById('resultadoBox');
         resultadoBox.classList.add('d-none');
         resultadoBox.classList.remove('alert-success', 'alert-danger');
 
-        // Captura os dados digitados
         const dadosCliente = {
             age: parseInt(document.getElementById('age').value),
             amount: parseFloat(document.getElementById('amount').value),
-            duration: parseInt(document.getElementById('duration').value),
+            // BUG CORRIGIDO: Agora o nome da variável enviada para a API bate com o esperado no CSV
+            months_loan_duration: parseInt(document.getElementById('duration').value),
             checking_balance: document.getElementById('checking_balance').value,
-            purpose: document.getElementById('purpose').value
+            credit_history: document.getElementById('credit_history').value,
+            purpose: document.getElementById('purpose').value,
+            employment_length: document.getElementById('employment_length').value,
+            housing: document.getElementById('housing').value,
+            // Sobrescrevendo o perfil "rico" do Back-end
+            property: "unknown/none",
+            job: "unskilled resident"
         };
 
         try {
-            // Faz a requisição POST para a nossa API no Python
             const resposta = await fetch('http://127.0.0.1:8000/prever', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -113,24 +154,34 @@
 
             const resultado = await resposta.json();
 
-            // Exibe o resultado na tela
             document.getElementById('resultadoTexto').innerText = resultado.mensagem;
             resultadoBox.classList.remove('d-none');
 
             if (resultado.codigo_risco === 0) {
-                resultadoBox.classList.add('alert-success'); // Verde para Aprovado
+                resultadoBox.classList.add('alert-success');
             } else {
-                resultadoBox.classList.add('alert-danger'); // Vermelho para Reprovado
+                resultadoBox.classList.add('alert-danger');
             }
 
         } catch (erro) {
             alert("Erro ao conectar com a API. Verifique se o servidor FastAPI está rodando!");
             console.error(erro);
         } finally {
-            // Restaura o botão
             btn.innerHTML = 'Analisar Risco';
             btn.disabled = false;
         }
+    });
+
+    // Botão de Debug: Preenche um perfil ruim REALISTA
+    document.getElementById('btnForcarRisco').addEventListener('click', function() {
+        document.getElementById('age').value = 22;
+        document.getElementById('amount').value = 7500;
+        document.getElementById('duration').value = 48;
+        document.getElementById('checking_balance').value = "< 0 DM";
+        document.getElementById('credit_history').value = "critical";
+        document.getElementById('employment_length').value = "unemployed";
+        document.getElementById('housing').value = "rent";
+        document.getElementById('purpose').value = "car (used)";
     });
 </script>
 

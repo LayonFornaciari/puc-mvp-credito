@@ -34,7 +34,7 @@ class Cliente(BaseModel):
     # O usuário digitará apenas estes 5 campos no Front-end:
     age: int = Field(..., gt=17, lt=100, description="Idade do cliente (deve ser > 17 e < 100)")
     amount: float = Field(..., gt=0, description="Valor do empréstimo solicitado (deve ser > 0)")
-    duration: int = Field(..., gt=0, description="Duração do empréstimo em meses")
+    months_loan_duration: int = Field(..., gt=0, description="Duração do empréstimo em meses")
     checking_balance: str = Field(...,
                                   description="Status da conta corrente ('< 0 DM', '1 - 200 DM', '> 200 DM', 'unknown')")
     purpose: str = Field(...,
