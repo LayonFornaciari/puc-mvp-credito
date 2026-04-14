@@ -24,13 +24,13 @@ No contexto de uma instituição financeira real, a base de dados original conta
 
 O projeto é um monorepo Full Stack contendo:
 
-* **Machine Learning (O Cérebro):** Treinado no Google Colab usando Scikit-Learn (Pipelines, StandardScaler, GridSearchCV) e algoritmos como KNN, Decision Tree, Naive Bayes e SVM. O modelo vencedor (SVM) foi exportado via `joblib`.
+* **Machine Learning:** Treinado no Google Colab usando Scikit-Learn (Pipelines, StandardScaler, GridSearchCV) e algoritmos como KNN, Decision Tree, Naive Bayes e SVM. O modelo vencedor (SVM) foi exportado via `joblib`.
 
-* **Back-end (O Motor):** API construída em **FastAPI** rodando no servidor Uvicorn. Responsável por carregar o modelo `.pkl` e servir o endpoint `POST /prever`.
+* **Back-end:** API construída em **FastAPI** rodando no servidor Uvicorn. Responsável por carregar o modelo `.pkl` e servir o endpoint `POST /prever`.
 
-* **Front-end (A Interface):** Página estática (HTML/CSS/JS) com **Bootstrap 5**, que consome a API de forma assíncrona (`fetch`).
+* **Front-end:** Página estática (HTML/CSS/JS) com **Bootstrap 5**, que consome a API de forma assíncrona (`fetch`).
 
-* **Qualidade (A Blindagem):** Testes automatizados criados com **PyTest** para garantir o desempenho e impedir regressão das métricas de Acurácia e Recall do modelo em produção.
+* **Qualidade:** Testes automatizados criados com **PyTest** para garantir o desempenho e impedir regressão das métricas de Acurácia e Recall do modelo em produção.
 
 ## 🚀 Como Executar o Projeto
 
